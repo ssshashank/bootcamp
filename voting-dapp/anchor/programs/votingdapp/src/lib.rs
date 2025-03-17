@@ -26,30 +26,28 @@ pub mod voting {
         Ok(())
     }
 
- // initialize candidates
-pub fn initialize_candidates(
-    ctx: Context<InitializeCandidates>,
-    candidates_name: String,
-    poll_id: u64,
-) -> Result<()> {
-    Ok(())
+    // initialize candidates
+    pub fn initialize_candidates(
+        ctx: Context<InitializeCandidates>,
+        candidates_name: String,
+        poll_id: u64,
+    ) -> Result<()> {
+        Ok(())
+    }
 }
 
-}
- 
-
-#derive(Accounts)]
+#[derive(Accounts)]
 #[instruction(candidates_name: String, poll_id: u64)]
 pub struct InitializeCandidates<'info> {
     #[account(mut)]
     pub signer: Signer<'info>,
-    
+
     #[account(
         seeds = [poll_id.to_le_bytes().as_ref()],
         bump,
     )]
     pub poll: Account<'info, Poll>,
-    
+
     #[account(
         init,
         payer = signer,
@@ -77,6 +75,13 @@ pub struct InitializePoll<'info> {
     pub system_program: Program<'info, System>,
 }
 
+#[account]
+#[derive(InitSpace)]
+pub struct Candidates {
+    #[max_len(32)]
+    pub candidate_name: String,
+    pub candidate_votes: u64,
+}
 #[account]
 #[derive(InitSpace)]
 pub struct Poll {
