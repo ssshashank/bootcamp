@@ -14,6 +14,67 @@ export type Voting = {
   },
   "instructions": [
     {
+      "name": "initializeCandidates",
+      "discriminator": [
+        203,
+        43,
+        51,
+        151,
+        17,
+        187,
+        100,
+        44
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "poll",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "arg",
+                "path": "pollId"
+              }
+            ]
+          }
+        },
+        {
+          "name": "candidates",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "arg",
+                "path": "pollId"
+              },
+              {
+                "kind": "arg",
+                "path": "candidatesName"
+              }
+            ]
+          }
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "candidatesName",
+          "type": "string"
+        },
+        {
+          "name": "pollId",
+          "type": "u64"
+        }
+      ]
+    },
+    {
       "name": "initializePoll",
       "discriminator": [
         193,
@@ -70,6 +131,19 @@ export type Voting = {
   ],
   "accounts": [
     {
+      "name": "candidates",
+      "discriminator": [
+        206,
+        170,
+        61,
+        95,
+        170,
+        80,
+        13,
+        39
+      ]
+    },
+    {
       "name": "poll",
       "discriminator": [
         110,
@@ -84,6 +158,22 @@ export type Voting = {
     }
   ],
   "types": [
+    {
+      "name": "candidates",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "candidateName",
+            "type": "string"
+          },
+          {
+            "name": "candidateVotes",
+            "type": "u64"
+          }
+        ]
+      }
+    },
     {
       "name": "poll",
       "type": {
