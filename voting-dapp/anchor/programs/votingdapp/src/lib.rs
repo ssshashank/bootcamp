@@ -1,5 +1,4 @@
 #![allow(clippy::result_large_err)]
-
 use anchor_lang::prelude::*;
 
 declare_id!("coUnmi3oBUtwtd9fjeAvSsJssXh5A5xyPbhpewyzRVF");
@@ -30,10 +29,41 @@ pub mod voting {
     pub fn initialize_candidates(
         ctx: Context<InitializeCandidates>,
         candidates_name: String,
-        poll_id: u64,
+        _poll_id: u64,
     ) -> Result<()> {
+        let candidate = &mut ctx.accounts.candidates;
+        let poll = &mut ctx.accounts.poll;
+        poll.candidates_amount += 1;
+        candidate.candidate_name = candidates_name;
+        candidate.candidate_votes = 0;
         Ok(())
     }
+
+    // initialize vote
+    pub fn vote(ctx: Context<Vote>, candidate_name: String, poll_id: u64) -> Result<()> {
+        let candidate = &mut ctx.accounts.candidates;
+        candidate.candidate_votes += 1;
+        Ok(())
+    }
+}
+
+#[derive(Accounts)]
+#[instruction(candidate_name: String, poll_id: u64)]
+pub struct Vote<'info> {
+    pub signer: Signer<'info>,
+
+    #[account(
+        seeds = [poll_id.to_le_bytes().as_ref()],
+        bump,
+    )]
+    pub poll: Account<'info, Poll>,
+
+    #[account(
+        mut,
+        seeds = [poll_id.to_le_bytes().as_ref(), candidate_name.as_bytes()],
+        bump,
+    )]
+    pub candidates: Account<'info, Candidates>,
 }
 
 #[derive(Accounts)]
@@ -43,6 +73,7 @@ pub struct InitializeCandidates<'info> {
     pub signer: Signer<'info>,
 
     #[account(
+        mut,
         seeds = [poll_id.to_le_bytes().as_ref()],
         bump,
     )]
