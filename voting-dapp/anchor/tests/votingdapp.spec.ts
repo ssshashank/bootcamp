@@ -84,7 +84,7 @@ describe('votingdapp', () => {
         );
         const smoothCandidate = await votingProgram.account.candidates.fetch(smoothAddress);
 
-        console.log(smoothCandidate, 'after vote');
+        console.log(smoothCandidate);
 
         expect(smoothCandidate.candidateVotes.toNumber()).toEqual(1);
     });
